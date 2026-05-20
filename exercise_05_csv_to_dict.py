@@ -3,56 +3,46 @@
 
 def csv_to_dict(filename):
     """
-    Lee un archivo CSV con header "name,age,city" y retorna una lista de
-    diccionarios, uno por fila.
-
-    Reglas:
-    - La primera línea es siempre el header.
-    - Las claves del diccionario se toman del header.
-    - El campo "age" se convierte a int. "name" y "city" quedan como str.
-    - Se deben hacer strip a los valores para eliminar espacios sobrantes.
-    - Si el archivo está vacío o solo tiene header, retornar [].
-    - Si el archivo no existe, propagar FileNotFoundError.
-    - No se permite usar el módulo csv.
-
-    Args:
-        filename: str - nombre del archivo a leer.
-
-    Returns:
-        list[dict] - lista de diccionarios por fila del CSV.
-
-    Raises:
-        FileNotFoundError: si el archivo no existe.
-
-    Ejemplo:
-        # archivo contiene:
-        # name,age,city
-        # Alice,30,Buenos Aires
-        # Bob,25,Rosario
-        csv_to_dict("people.csv") -> [
-            {"name": "Alice", "age": 30, "city": "Buenos Aires"},
-            {"name": "Bob", "age": 25, "city": "Rosario"},
-        ]
+    Lee un CSV simple con header name,age,city y retorna una lista de
+    diccionarios. No usa el módulo csv.
     """
-    lista = []
+    result = []
+    header = None
 
-    with open(filename, "r") as archivo:
-        header = archivo.readline()
-        header = header.strip()
-        header = header.split(",")
+    try:
+        file = open(filename, "r")
+        try:
+            for line in file:
+                clean_line = line.strip()
+                if header is None:
+                    if clean_line != "":
+                        header = clean_line.split(",")
+                        i = 0
+                        while i < len(header):
+                            header[i] = header[i].strip()
+                            i += 1
+                else:
+                    if clean_line != "":
+                        values = clean_line.split(",")
+                        i = 0
+                        while i < len(values):
+                            values[i] = values[i].strip()
+                            i += 1
 
-        for linea in archivo:
-            linea = linea.strip()
-            linea = linea.split(",")
-            diccionario = {}
-            diccionario[header[0]] = linea[0].strip()
-            diccionario[header[1]] = int(linea[1].strip())
-            diccionario[header[2]] = linea[2].strip()
-            lista.append(diccionario)
-    return lista
+                        row = {}
+                        i = 0
+                        while i < len(header):
+                            key = header[i]
+                            value = values[i]
+                            if key == "age":
+                                row[key] = int(value)
+                            else:
+                                row[key] = value
+                            i += 1
+                        result.append(row)
+        finally:
+            file.close()
+    except FileNotFoundError:
+        raise
 
-
-
-
-
-
+    return result
