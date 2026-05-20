@@ -42,4 +42,30 @@ def parse_log(filename):
             "WARN": ["lento"],
         }
     """
-    pass  # Reemplazar con tu implementación
+
+    diccionario = {}
+
+    with open(filename, "r") as archivo:
+
+         for linea in archivo:
+             linea = linea.strip()
+
+             if linea != "":
+                 linea = linea.split(":",1)
+
+                 if len(linea) == 1:
+                    raise ValueError("invalid log line")
+
+                 linea[1] = linea[1].strip()
+                 linea[0] = linea[0].strip()
+
+                 if linea[0] not in diccionario:
+                     diccionario[linea[0]] = [linea[1]]
+
+                 else:
+                     diccionario[linea[0]].append(linea[1])
+
+    return diccionario
+
+
+

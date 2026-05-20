@@ -1,6 +1,3 @@
-# Ejercicio 3 - Ventas por producto
-
-
 def read_sales(filename):
     """
     Lee un archivo con ventas en formato "producto:valor;producto:valor;..."
@@ -31,9 +28,26 @@ def read_sales(filename):
             "producto2": [200.0],
         }
     """
-    pass  # Reemplazar con tu implementación
 
+    ventas = {}
 
+    with open(filename, "r") as archivo:
+
+        linea = archivo.read()
+
+        separacion = linea.split(";")
+
+        for i in separacion:
+
+            if i != "":
+
+                producto, valor = i.split(":")
+
+                if producto in ventas:
+                    ventas[producto].append(float(valor))
+                else:
+                    ventas[producto] = [float(valor)]
+    return ventas
 def process_sales(data):
     """
     Para cada producto del diccionario, imprime en el orden natural del dict:
@@ -53,4 +67,10 @@ def process_sales(data):
         process_sales({"producto1": [100.0, 150.0]})
         # imprime: "producto1: ventas totales $250.00, promedio $125.00"
     """
-    pass  # Reemplazar con tu implementación
+
+    for producto,ventas in data.items():
+
+        ventastotales = sum(ventas)
+        promedio = ventastotales / len(ventas)
+
+        print (f"{producto}: ventas totales ${ventastotales:.2f}, promedio ${promedio:.2f}")
